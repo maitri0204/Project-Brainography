@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}White-Label Token Tracking{% endblock %}
+
+{% block content %}
+<div class="content-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 15px; color: white; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+    <h1 style="margin: 0; font-size: 32px; font-weight: 700;">
+        <i class="fas fa-chart-line" style="margin-right: 12px;"></i>White-Label Token Tracking
+    </h1>
+    <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.95;">Monitor token usage and purchases across all white-label franchises</p>
+</div>
+
+<!-- Summary Statistics Cards -->
+<div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 35px;">
+    <!-- Total White-Labels Card -->
+    <div class="dashboard-card" style="background: linear-gradient(135deg, #66ea73 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Total White-Labels</div>
+                <div style="font-size: 36px; font-weight: bold;">{{ tracking_data|length }}</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 18px; border-radius: 12px;">
+                <i class="fas fa-building" style="font-size: 32px;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Tokens Sold Card -->
+    <div class="dashboard-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(245, 87, 108, 0.25); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Total Tokens Sold</div>
+                <div style="font-size: 36px; font-weight: bold;">{{ tracking_data|sum(attribute='total_purchased') }}</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 18px; border-radius: 12px;">
+                <i class="fas fa-coins" style="font-size: 32px;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tokens Used Card -->
+    <div class="dashboard-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(254, 225, 64, 0.25); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Total Tokens Used</div>
+                <div style="font-size: 36px; font-weight: bold;">{{ tracking_data|sum(attribute='total_used') }}</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 18px; border-radius: 12px;">
+                <i class="fas fa-check-circle" style="font-size: 32px;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tokens Remaining Card -->
+    <div class="dashboard-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.25); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Tokens Remaining</div>
+                <div style="font-size: 36px; font-weight: bold;">{{ tracking_data|sum(attribute='tokens_remaining') }}</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 18px; border-radius: 12px;">
+                <i class="fas fa-wallet" style="font-size: 32px;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Franchise Table -->
+<div class="table-container" style="background: white; padding: 0; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); overflow: hidden;">
+    <div style="padding: 25px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h2 style="margin: 0; font-size: 22px; font-weight: 600;">
+            <i class="fas fa-table" style="margin-right: 10px;"></i>Franchise-wise Token Details
+        </h2>
+        <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Detailed breakdown of token usage for each white-label franchise</p>
+    </div>
+    
+    <div style="overflow-x: auto;">
+        <table class="data-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 18px 20px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">#</th>
+                    <th style="padding: 18px 20px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Franchise Name</th>
+                    <th style="padding: 18px 20px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Company</th>
+                    <th style="padding: 18px 20px; text-align: center; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Tokens Purchased</th>
+                    <th style="padding: 18px 20px; text-align: center; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Tokens Used</th>
+                    <th style="padding: 18px 20px; text-align: center; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Remaining</th>
+                    <th style="padding: 18px 20px; text-align: center; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Purchase Count</th>
+                    <th style="padding: 18px 20px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Last Purchase</th>
+                    <th style="padding: 18px 20px; text-align: center; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in tracking_data %}
+                <tr style="border-bottom: 1px solid #f1f3f5; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='white'">
+                    <td style="padding: 18px 20px; color: #6c757d;">{{ loop.index }}</td>
+                    <td style="padding: 18px 20px;">
+                        <strong style="color: #212529; font-size: 15px;">{{ data.franchise.franchise_name }}</strong>
+                    </td>
+                    <td style="padding: 18px 20px; color: #6c757d;">{{ data.franchise.company_name or '-' }}</td>
+                    <td style="padding: 18px 20px; text-align: center;">
+                        <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px;">{{ data.total_purchased }}</span>
+                    </td>
+                    <td style="padding: 18px 20px; text-align: center;">
+                        <span style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px;">{{ data.total_used }}</span>
+                    </td>
+                    <td style="padding: 18px 20px; text-align: center;">
+                        {% if data.tokens_remaining > 10 %}
+                        <span style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px;">{{ data.tokens_remaining }}</span>
+                        {% elif data.tokens_remaining > 0 %}
+                        <span style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px;">{{ data.tokens_remaining }}</span>
+                        {% else %}
+                        <span style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px;">{{ data.tokens_remaining }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 18px 20px; text-align: center; color: #495057;">
+                        <i class="fas fa-shopping-cart" style="color: #667eea; margin-right: 6px;"></i>{{ data.purchase_count }} purchase{{ 's' if data.purchase_count != 1 else '' }}
+                    </td>
+                    <td style="padding: 18px 20px; color: #6c757d;">
+                        {% if data.last_purchase_date %}
+                        <i class="fas fa-calendar-alt" style="color: #667eea; margin-right: 6px;"></i>{{ data.last_purchase_date.strftime('%d %b %Y') }}
+                        {% else %}
+                        <span style="color: #adb5bd; font-style: italic;">Never</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 18px 20px; text-align: center;">
+                        {% if data.tokens_remaining > 0 %}
+                        <span style="background: #d4edda; color: #155724; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">
+                            <i class="fas fa-check-circle" style="margin-right: 4px;"></i>Active
+                        </span>
+                        {% else %}
+                        <span style="background: #f8d7da; color: #721c24; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">
+                            <i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i>No Tokens
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" style="padding: 60px 20px; text-align: center;">
+                        <div style="color: #adb5bd;">
+                            <i class="fas fa-inbox" style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;"></i>
+                            <p style="font-size: 18px; font-weight: 600; margin: 0 0 8px 0;">No White-Label Franchises Found</p>
+                            <p style="font-size: 14px; margin: 0; opacity: 0.8;">Add white-label franchises to start tracking token usage</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+/* Hover effect for dashboard cards */
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .table-container {
+        overflow-x: scroll;
+    }
+    
+    .data-table {
+        min-width: 900px;
+    }
+}
+
+/* Smooth animations */
+.dashboard-card, .table-container {
+    animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}

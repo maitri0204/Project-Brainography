@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Step 1 - Kareer Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        
+        .step.active {
+            background: white;
+            color: #3498db;
+        }
+        
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .form-title {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 12px 15px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            text-align: center;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover .file-upload-label {
+            border-color: #3498db;
+            color: #3498db;
+        }
+        
+        .btn-next {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #fdf2f2;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="progress">
+                <div class="step active">1</div>
+                <div class="step-line"></div>
+                <div class="step">2</div>
+                <div class="step-line"></div>
+                <div class="step">3</div>
+            </div>
+            <h1>Franchise Details</h1>
+            <p>Please provide your franchise information</p>
+        </div>
+        
+        <div class="form-container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="error">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="franchise_name">Franchise Name *</label>
+                        <input type="text" id="franchise_name" name="franchise_name" class="form-control" placeholder="e.g. Mr./Ms./Dr. John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company_name">Company Name *</label>
+                        <input type="text" id="company_name" name="company_name" class="form-control" placeholder="Your Company Name" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" class="form-control" rows="3" placeholder="Use commas to separate lines (e.g., 101 ABC Center, DEF Road, GHI area, City-Pincode)" required></textarea>
+                    <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 5px;">Tip: Each comma will create a new line in the report</small>
+                </div>                
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91 9876543210" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp_number">WhatsApp Number *</label>
+                        <input type="tel" id="whatsapp_number" name="whatsapp_number" class="form-control" placeholder="+91 9876543210" required>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="same_as_phone" onchange="copyPhoneNumber()">
+                            <label for="same_as_phone">Same as phone number</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="website">Website URL *</label>
+                        <input type="url" id="website" name="website" class="form-control" placeholder="https://yourwebsite.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gst_number">GST Number</label>
+                        <input type="text" id="gstnumber" name="gstnumber" class="form-control" placeholder="Enter GST Number" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pan_number">PAN Number *</label>
+                        <input type="text" id="pannumber" name="pannumber" class="form-control" placeholder="Enter PAN Number" required style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    <div class="form-group">
+                        <label for="logo">Upload Logo (Max 2MB) *</label>
+                        <div class="file-upload">
+                            <input type="file" id="logo" name="logo" accept="image/*" required>
+                            <label for="logo" class="file-upload-label">
+                                📁 Choose Logo File
+                                <br><small>Recommended: 200x70 pixels</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-next">Next Step →</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function copyPhoneNumber() {
+            const checkbox = document.getElementById('same_as_phone');
+            const phoneNumber = document.getElementById('phone').value;
+            const whatsappNumber = document.getElementById('whatsapp_number');
+            
+            if (checkbox.checked) {
+                whatsappNumber.value = phoneNumber;
+            } else {
+                whatsappNumber.value = '';
+            }
+        }
+        
+        // Update file upload label when file is selected
+        document.getElementById('logo').addEventListener('change', function(e) {
+            const label = document.querySelector('.file-upload-label');
+            if (e.target.files.length > 0) {
+                label.innerHTML = `✅ ${e.target.files[0].name}`;
+            } else {
+                label.innerHTML = '📁 Choose Logo File<br><small>Recommended: 200x70 pixels</small>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .container-main {
+        width: 1100px;
+        margin: 30px auto;
+        border: 2px dashed #222;
+        border-radius: 8px;
+        background: #f9f9f9;
+        padding: 40px 30px 30px 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+        position: relative;
+    }
+    .assessment-header {
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+    .assessment-header h2 {
+        display: inline-block;
+        background: #fff;
+        border: 2px solid #222;
+        border-radius: 3px;
+        padding: 2px 30px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .info-table {
+        border-collapse: collapse;
+        margin: 0 auto 18px auto;
+        width: 95%;
+    }
+    .info-table th, .info-table td {
+        border: 1px solid #222;
+        padding: 8px 12px;
+        background: #f7f7f7;
+        font-size: 16px;
+    }
+    .info-table th {
+        width: 170px;
+        background: #eaeaea;
+        text-align: center;
+    }
+    .info-table td {
+        width: 230px;
+        background: #fff;
+    }
+    .info-input {
+        width: 95%;
+        font-size: 16px;
+        padding: 4px 6px;
+        border: 1px solid #aaa;
+        border-radius: 3px;
+    }
+    .pattern-table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        width: 95%;
+    }
+    .pattern-table th, .pattern-table td {
+        border: 1px solid #222;
+        padding: 6px 8px;
+        background: #f7f7f7;
+        font-size: 15px;
+        text-align: center;
+    }
+    .pattern-table th {
+        background: #eaeaea;
+        font-weight: bold;
+    }
+    .pattern-dropdown, .rc-input, .rc-display {
+        width: 80px;
+        box-sizing: border-box;
+        font-size: 15px;
+        padding: 3px;
+    }
+    .rc-input {
+        background: #fff;
+    }
+    .rc-display {
+        background: #d9fcd9;
+        border: 1px solid #aaa;
+        color: #333;
+    }
+    .rc-green {
+        background: #d9fcd9 !important;
+        border: 1px solid #aaa;
+        width: 80px;
+        margin-top: 2px;
+    }
+    .bottom-btn-row {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        width: 100%;
+        margin-top: 25px;
+    }
+    .pdf-btn {
+        background: #eaeaea;
+        color: #111;
+        padding: 10px 40px;
+        border: 2px solid #222;
+        border-radius: 4px;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    @media (max-width: 1200px) {
+        .container-main { width: 99%; }
+    }
+    .update-btn {
+        background: #28a745;
+        color: #fff;
+        padding: 10px 30px;
+        border: 2px solid #28a745;
+        border-radius: 4px;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+
+    .calculate-btn {
+        background: #007bff;
+        color: #fff;
+        padding: 10px 30px;
+        border: 2px solid #007bff;
+        border-radius: 4px;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .update-btn:hover {
+        background: #218838;
+        border-color: #218838;
+    }
+
+    .calculate-btn:hover {
+        background: #0056b3;
+        border-color: #0056b3;
+    }
+</style>
+
+<div class="container-main">
+    <div class="assessment-header">
+        <h2>Edit Student Assessment</h2>
+    </div>
+    <form method="POST" class="assessment-form" action="{{ url_for('calculation_result') }}">
+        <!-- Personal Details Table -->
+        <table class="info-table">
+            <tr>
+                <th>Name</th>
+                <td><input type="text" name="name" class="info-input" value="{{ assessment.name if assessment else '' }}"></td>
+                <th>Parent's Name</th>
+                <td><input type="text" name="parent_name" class="info-input" value="{{ assessment.parent_name if assessment else '' }}"></td>
+            </tr>
+            <tr>
+                <th>D.O.B</th>
+                <td>
+                    <input type="text" name="dob" class="info-input" placeholder="dd/mm/yyyy" 
+                           value="{{ assessment.dob if assessment else '' }}"
+                           maxlength="10"
+                           oninput="formatDate(this)"
+                           title="Enter date as ddmmyyyy - slashes will be added automatically">
+                </td>
+                <th>Standard</th>
+                <td><input type="text" name="class" class="info-input" value="{{ assessment.class_ if assessment else '' }}"></td>
+            </tr>                        
+            <tr>
+                <th>Address</th>
+                <td><input type="text" name="address" maxlength="50" placeholder="Enter address (max 50 characters)" class="info-input" value="{{ assessment.address if assessment else '' }}"></td>
+                <th>Institute</th>
+                <td><input type="text" name="institute" class="info-input" value="{{ assessment.institute if assessment else '' }}"></td>
+            </tr>
+            <tr>
+                <th>Contact No.</th>
+                <td><input type="text" name="contact" class="info-input" value="{{ assessment.contact if assessment else '' }}"></td>
+                <th>Email ID</th>
+                <td><input type="email" name="email" class="info-input" value="{{ assessment.email if assessment else '' }}"></td>
+            </tr>
+            <tr>
+                <th>Analysis No.</th>
+                <td><input type="text" name="analysis_no" value="{{ new_analysis_no or (assessment.analysis_no if assessment else '') }}" readonly class="form-control"></td>
+                <th>Center Name</th>
+                <td><input type="text" name="center_name" id="center_name"
+                    value="{% if user.role == 'superuser' %}Kareer Studio{% else %}{{ assessment.center_name or '' }}{% endif %}"
+                    readonly required style="background-color: #e9ecef; cursor: not-allowed;">
+             </td>
+            </tr>
+        </table>
+        <!-- Pattern/RC Table -->
+        <table class="pattern-table">
+            <tr>
+                <th></th>
+                <th>Pattern</th>
+                <th>RC</th>
+                <th></th>
+                <th>Pattern</th>
+                <th>RC</th>
+            </tr>
+            {% for i in range(1,6) %}
+            <tr>
+                <td>L{{i}}</td>
+                <td>
+                    <select name="l{{i}}_pattern" class="pattern-dropdown">
+                        <option value=""></option>
+                        {% for option in ['ul','rl','fl','as','at','au','ar','ws','wt','we','wd','wp','wi','wl','wc','wx'] %}
+                        <option value="{{option}}" 
+                            {% if assessment and getattr(assessment, 'l' ~ i ~ '_pattern') == option %}selected{% endif %}>
+                            {{option.upper()}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="l{{i}}_rc" min="0" max="24"
+                           value="{{ getattr(assessment, 'l' ~ i ~ '_rc') if assessment else '' }}"
+                           class="rc-input"
+                           oninput="document.getElementById('l{{i}}_rc_green').value=this.value;">
+                </td>
+                <td>R{{i}}</td>
+                <td>
+                    <select name="r{{i}}_pattern" class="pattern-dropdown">
+                        <option value=""></option>
+                        {% for option in ['ul','rl','fl','as','at','au','ar','ws','wt','we','wd','wp','wi','wl','wc','wx'] %}
+                        <option value="{{option}}" 
+                            {% if assessment and getattr(assessment, 'r' ~ i ~ '_pattern') == option %}selected{% endif %}>
+                            {{option.upper()}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="r{{i}}_rc" min="0" max="24"
+                           value="{{ getattr(assessment, 'r' ~ i ~ '_rc') if assessment else '' }}"
+                           class="rc-input"
+                           oninput="document.getElementById('r{{i}}_rc_green').value=this.value;">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <input type="number" id="l{{i}}_rc_green"
+                           value="{{ getattr(assessment, 'l' ~ i ~ '_rc') if assessment else '' }}"
+                           readonly class="rc-green">
+                </td>
+                <td></td>
+                <td></td>
+                <td>
+                    <input type="number" id="r{{i}}_rc_green"
+                           value="{{ getattr(assessment, 'r' ~ i ~ '_rc') if assessment else '' }}"
+                           readonly class="rc-green">
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div class="bottom-btn-row">
+            <button type="submit" name="action" value="update" class="update-btn">Update Assessment</button>
+            <button type="submit" name="action" value="calculate" class="calculate-btn" formaction="{{ url_for('calculation_result') }}">Calculate Results</button>
+        </div>
+        
+        <!-- Add hidden field for assessment ID -->
+        <input type="hidden" name="assessment_id" value="{{ assessment.id }}">        
+    </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var addressField = document.querySelector('input[name="address"]');
+    var form = addressField.closest('form');
+    
+    // Real-time character counter (optional)
+    addressField.addEventListener('input', function() {
+        var remaining = 50 - this.value.length;
+        // You can add a character counter display here if needed
+    });
+    
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        var address = addressField.value;
+        if (address.length > 50) {
+            alert('Address cannot exceed 50 characters');
+            e.preventDefault();
+            return false;
+        }
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // Pattern may be input or select; so catch both events on both kinds
+    function handlePatternInputChange(event) {
+        var patternInput = event.target;
+        var value = (typeof patternInput.value === 'string') ? patternInput.value.trim() : '';
+        var rcInputName = patternInput.name.replace('pattern', 'rc');
+        var rcInput = document.querySelector(`input[name="${rcInputName}"]`);
+        if (!rcInput) return;
+
+        // ✅ If pattern starts with 'A' or 'a', set RC to 0 and make it readonly
+        if (value.length > 0 && value[0].toLowerCase() === 'a') {
+            rcInput.value = '0';
+            rcInput.setAttribute('readonly', 'readonly');
+            rcInput.style.backgroundColor = '#e9ecef';  // Gray background to show it's disabled
+            rcInput.style.cursor = 'not-allowed';
+            rcInput.dispatchEvent(new Event('input'));
+        } else {
+            // ✅ If pattern does NOT start with 'a', allow editing
+            rcInput.removeAttribute('readonly');
+            rcInput.style.backgroundColor = '#fff';  // White background for editable
+            rcInput.style.cursor = 'text';
+        }
+    }
+
+    // Listen for both select and input boxes
+    var patternInputs = document.querySelectorAll("input[name$='_pattern'], select[name$='_pattern']");
+    patternInputs.forEach(function(input) {
+        input.addEventListener('input', handlePatternInputChange);
+        input.addEventListener('change', handlePatternInputChange);
+    });
+});
+function formatDate(input) {
+    // Remove all non-numeric characters
+    let value = input.value.replace(/\D/g, '');
+    
+    // Limit to 8 digits (ddmmyyyy)
+    if (value.length > 8) {
+        value = value.substring(0, 8);
+    }
+    
+    // Add slashes automatically
+    if (value.length >= 3) {
+        value = value.substring(0, 2) + '/' + value.substring(2);
+    }
+    if (value.length >= 6) {
+        value = value.substring(0, 5) + '/' + value.substring(5);
+    }
+    
+    // Update the input value
+    input.value = value;
+}
+
+// Additional validation on blur
+document.addEventListener('DOMContentLoaded', function() {
+    const dobInputs = document.querySelectorAll('input[name="dob"]');
+    dobInputs.forEach(function(input) {
+        input.addEventListener('blur', function() {
+            validateDate(this);
+        });
+    });
+});
+
+function validateDate(input) {
+    const value = input.value;
+    if (value && value.length === 10) {
+        const parts = value.split('/');
+        if (parts.length === 3) {
+            const day = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            
+            // Basic validation
+            if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
+                alert('Please enter a valid date in dd/mm/yyyy format');
+                input.focus();
+            }
+        }
+    }
+}
+</script>
+
+{% endblock %}

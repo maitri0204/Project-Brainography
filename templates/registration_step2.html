@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Step 2 - Payment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        
+        .step.active {
+            background: white;
+            color: #3498db;
+        }
+        
+        .step.completed {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .payment-container {
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .payment-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .payment-title {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .payment-amount {
+            font-size: 48px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        
+        .payment-description {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .payment-features {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .payment-features h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .payment-features ul {
+            list-style: none;
+        }
+        
+        .payment-features li {
+            padding: 8px 0;
+            color: #555;
+        }
+        
+        .payment-features li::before {
+            content: '✅';
+            margin-right: 10px;
+        }
+        
+        .btn-pay {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-pay:hover {
+            transform: translateY(-2px);
+        }
+        
+        .security-note {
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #fdf2f2;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="progress">
+                <div class="step completed">1</div>
+                <div class="step-line"></div>
+                <div class="step active">2</div>
+                <div class="step-line"></div>
+                <div class="step">3</div>
+            </div>
+            <h1>Payment</h1>
+            <p>Complete your registration with payment</p>
+        </div>
+        
+        <div class="payment-container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="error">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="payment-icon">💳</div>
+            <h2 class="payment-title">Registration Fee</h2>
+            <div class="payment-amount">₹1</div>
+            <p class="payment-description">
+                One-time registration fee to activate your whitelabel platform
+            </p>
+            
+            <div class="payment-features">
+                <h3>What you get:</h3>
+                <ul>
+                    <li>Your own branded platform</li>
+                    <li>Custom logo and company name</li>
+                    <li>Student management system</li>
+                    <li>Brainography report generation</li>
+                    <li>Email support</li>
+                    <li>Lifetime access</li>
+                </ul>
+            </div>
+            
+            <form method="POST">
+                <button type="submit" class="btn-pay">
+                    🔒 Proceed to Payment
+                </button>
+            </form>
+            
+            <p class="security-note">
+                🔒 Secure payment powered by Razorpay
+            </p>
+        </div>
+    </div>
+</body>
+</html>

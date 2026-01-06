@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Complete - Kareer Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        
+        .step.completed {
+            background: white;
+            color: #27ae60;
+        }
+        
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .content {
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .success-title {
+            color: #27ae60;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .success-message {
+            color: #2c3e50;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .company-name {
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .website-url {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .website-url strong {
+            color: #2c3e50;
+        }
+        
+        .website-url a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .next-steps {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .next-steps h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .next-steps ol {
+            color: #555;
+        }
+        
+        .next-steps li {
+            padding: 8px 0;
+            line-height: 1.5;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+        
+        .email-note {
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="progress">
+                <div class="step completed">1</div>
+                <div class="step-line"></div>
+                <div class="step completed">2</div>
+                <div class="step-line"></div>
+                <div class="step completed">3</div>
+            </div>
+            <h1>Registration Complete!</h1>
+            <p>Your whitelabel platform is ready</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-icon">🎉</div>
+            <h2 class="success-title">Congratulations!</h2>
+            <p class="success-message">
+                Your franchise registration for <span class="company-name">{{ company_name }}</span> has been completed successfully.
+            </p>
+            
+            <div class="website-url">
+                <strong>Your Platform URL:</strong><br>
+                <a href="{{ website_url }}" target="_blank">{{ website_url }}</a>
+            </div>
+            
+            <div class="next-steps">
+                <h3>Next Steps:</h3>
+                <ol>
+                    <li>Check your email for login credentials</li>
+                    <li>Visit your platform URL above</li>
+                    <li>Login with the provided credentials</li>
+                    <li>Change your password for security</li>
+                    <li>Start adding students and generating reports</li>
+                </ol>
+            </div>
+            
+            <!-- <a href="{{ website_url }}" class="btn-login">
+                Access Your Platform →
+            </a>             -->
+            
+            <p class="email-note">
+                ⚠️ <strong>Important:</strong> Complete the DNS setup above for your custom domain to work properly.<br>
+                📧 Login details have been sent to your email address. Please check your email and follow the instructions.
+            </p>            
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-file-invoice text-info me-2"></i>Billing History
+            </h2>
+            
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <h3 class="text-success">₹{{ "%.2f"|format(total_spent) }}</h3>
+                            <p class="text-muted mb-0">Total Amount Spent</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <h3 class="text-info">{{ total_tokens_purchased }}</h3>
+                            <p class="text-muted mb-0">Total Tokens Purchased</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transaction History -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Transaction History</h5>
+                </div>
+                <div class="card-body">
+                    {% if purchases %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Tokens Bought</th>
+                                    <th>Amount Paid</th>
+                                    <th>Payment ID</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for purchase in purchases %}
+                                <tr>
+                                    <td>{{ purchase.purchase_date.strftime('%d %b %Y, %I:%M %p') }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ purchase.tokens_bought }} tokens</span>
+                                    </td>
+                                    <td class="text-success">₹{{ "%.2f"|format(purchase.amount_paid) }}</td>
+                                    <td>
+                                        <small class="text-muted">{{ purchase.payment_id }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Completed</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No transactions yet.</p>
+                        <a href="{{ url_for('buy_tokens') }}" class="btn btn-primary">
+                            <i class="fas fa-coins me-2"></i>Buy Your First Tokens
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

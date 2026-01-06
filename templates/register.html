@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Kareer Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .left-side {
+            width: 50%;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .left-side::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('{{ url_for("static", filename="bg-pattern.jpg") }}') center/cover;
+            opacity: 0.2;
+            z-index: 1;
+        }
+        
+        .left-content {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .logo-circle {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .building-image {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: grayscale(20%);
+        }
+        
+        .right-side {
+            width: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        .register-container {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .brand-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .brand-logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        
+        .brand-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .brand-subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .form-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .form-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #bdc3c7;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ecf0f1;
+            z-index: 1;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .social-btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        .social-btn:hover {
+            border-color: #bdc3c7;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .social-btn i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .social-btn.phone i {
+            color: #27ae60;
+        }
+        
+        .social-btn.google i {
+            color: #db4437;
+        }
+        
+        .social-btn.microsoft i {
+            color: #0078d4;
+        }
+        
+        .social-btn.apple i {
+            color: #000;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #fdf2f2;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .success {
+            color: #27ae60;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f0f9f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="left-side">
+        <div class="left-content">
+            <div class="logo-circle">
+                <img src="{{ url_for('static', filename='background.jpeg') }}" alt="Building" class="building-image">
+            </div>
+        </div>
+    </div>
+    
+    <div class="right-side">
+        <div class="register-container">
+            <div class="brand-header">
+                <img src="{{ url_for('static', filename='Logo.jpeg') }}" alt="Kareer Studio" class="brand-logo">
+            </div>
+            
+            <h2 class="form-title">Register your franchise</h2>
+            <p class="form-subtitle">Start your whitelabel journey with us.</p>
+            
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="success">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST">
+                <div class="form-group">
+                    <input type="email" name="email" class="form-control" placeholder="Email address" required>
+                </div>
+                <button type="submit" class="btn-primary">Continue</button>
+            </form>
+            
+            <!-- <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <div class="social-login">
+                <a href="#" class="social-btn phone">
+                    <i class="fa fa-phone"></i>
+                    Continue with phone
+                </a>
+                
+                <a href="#" class="social-btn google">
+                    <i class="fa fa-google"></i>
+                    Continue with Google
+                </a>
+                
+                <a href="#" class="social-btn microsoft">
+                    <i class="fa fa-windows"></i>
+                    Continue with Microsoft Account
+                </a>
+                
+                <a href="#" class="social-btn apple">
+                    <i class="fa fa-apple"></i>
+                    Continue with Apple
+                </a>
+            </div>
+            
+            <div class="login-link">
+                Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+            </div> -->
+        </div>
+    </div>
+</body>
+</html>

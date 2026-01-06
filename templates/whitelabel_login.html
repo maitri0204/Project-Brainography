@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - {% if franchise %}{{ franchise.company_name }}{% else %}Kareer Studio{% endif %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            background: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .left-section {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1950&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 3rem;
+        }
+
+        .left-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .left-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 400px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .right-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: white;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-section img {
+            width: 120px;
+            height: auto;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .logo-section h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-section p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 40px 0.875rem 1rem; /* Added right padding for toggle button */
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .error-message {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .register-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Password field container */
+        .password-field {
+            position: relative;
+        }
+
+        /* Password toggle button */
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none !important;
+            border: none !important;
+            color: #999 !important;
+            cursor: pointer;
+            font-size: 16px;
+            width: auto !important;
+            padding: 0 !important;
+            margin: 0;
+        }
+
+        .password-toggle:hover {
+            background: none !important;
+            color: #666 !important;
+        }
+
+        /* Forgot password link */
+        .forgot-password {
+            text-align: left;
+            margin-top: 1rem;
+        }
+
+        .forgot-password a {
+            color: #3498db;
+            font-size: 0.9rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-section {
+                flex: none;
+                height: 40vh;
+                padding: 2rem 1rem;
+            }
+
+            .left-section h1 {
+                font-size: 2rem;
+            }
+
+            .left-section p {
+                font-size: 1rem;
+            }
+
+            .right-section {
+                flex: 1;
+                padding: 1rem;
+            }
+
+            .login-form {
+                padding: 2rem 1.5rem;
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-section {
+                height: 35vh;
+                padding: 1.5rem 1rem;
+            }
+
+            .left-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .logo-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .login-form {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Section - Background Image -->
+        <div class="left-section">
+            <!-- <h1>Welcome Back!</h1>
+            <p>Access your personalized career guidance platform and continue your journey towards success.</p> -->
+        </div>
+
+        <!-- Right Section - Login Form -->
+        <div class="right-section">
+            <div class="login-form">
+                <!-- Logo Section -->
+                <div class="logo-section">
+                    {% if franchise and franchise.logo_filename %}
+                        <img src="{{ url_for('static', filename=franchise.logo_filename) }}" alt="{{ franchise.company_name }} Logo">
+                        <!-- <h2>{{ franchise.company_name }}</h2> -->
+                    {% else %}
+                        <img src="https://via.placeholder.com/120x60/3498db/white?text=LOGO" alt="Default Logo">
+                        <h2>Kareer Studio</h2>
+                        <p>Fulfilling your dreams</p>
+                    {% endif %}
+                </div>
+
+                <!-- Error Message -->
+                {% if error %}
+                    <div class="error-message">{{ error }}</div>
+                {% endif %}
+
+                <!-- Login Form -->
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-field">
+                            <input type="password" id="password" name="password" required placeholder="Enter your password">
+                            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                        <!-- Forgot Password Link -->
+                        <div class="forgot-password">
+                            <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+                <!-- Register Link
+                <div class="register-link">
+                    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const toggleButton = document.querySelector('.password-toggle');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleButton.textContent = '🙈';
+        } else {
+            passwordField.type = 'password';
+            toggleButton.textContent = '👁️';
+        }
+    }
+    </script>
+</body>
+</html>

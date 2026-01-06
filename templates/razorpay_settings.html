@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .settings-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    
+    .btn-save {
+        background: #18447e;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+    }
+    
+    .btn-save:hover {
+        background: #13315c;
+    }
+    
+    .info-box {
+        background: #e3f2fd;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border-left: 4px solid #2196f3;
+    }
+</style>
+
+<div class="settings-container">
+    <h2>Razorpay Settings</h2>
+    
+    <div class="info-box">
+        <strong>Note:</strong> Configure your Razorpay credentials here. All token payments from franchises added under you will be processed through your Razorpay account.
+    </div>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>Razorpay Key ID</label>
+            <input type="text" name="razorpay_key_id" value="{{ franchise.razorpay_key_id or '' }}" required placeholder="rzp_live_xxxxxxxxxxxxx">
+        </div>
+        
+        <div class="form-group">
+            <label>Razorpay Key Secret</label>
+            <input type="password" name="razorpay_key_secret" value="{{ franchise.razorpay_key_secret or '' }}" required placeholder="Enter your Razorpay secret key">
+        </div>
+        
+        <button type="submit" class="btn-save">Save Settings</button>
+    </form>
+</div>
+{% endblock %}

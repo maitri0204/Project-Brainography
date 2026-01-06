@@ -1,0 +1,309 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<style>
+/* Modern Table Styling */
+.student-table {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+}
+
+.student-table thead th {
+    background: linear-gradient(45deg, #2980b9, #3498db);
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    padding: 15px 10px;
+    border: none;
+    font-size: 14px;
+}
+
+.student-table tbody td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 12px 10px;
+    font-size: 13px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.student-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+/* Action Icons Styling */
+.action-icons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.action-download {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.action-download:hover {
+    background-color: #138496;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-edit {
+    background-color: #007bff;
+    color: white;
+}
+
+.action-edit:hover {
+    background-color: #0056b3;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.action-delete:hover {
+    background-color: #c82333;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.page-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Search Container */
+.search-container {
+    max-width: 500px;
+    margin: 20px auto 30px;
+    position: relative;
+}
+
+.search-box {
+    width: 100%;
+    padding: 12px 45px 12px 20px;
+    font-size: 16px;
+    border: 2px solid #3498db;
+    border-radius: 30px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+.search-box:focus {
+    border-color: #2980b9;
+    box-shadow: 0 4px 12px rgba(41, 128, 185, 0.4);
+    transform: translateY(-1px);
+}
+
+.search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #3498db;
+    font-size: 18px;
+}
+
+.result-count {
+    text-align: center;
+    color: #2980b9;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="container-fluid px-4">
+    <h2 class="page-title">Manage Students</h2>
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" placeholder="Search students by name..." autocomplete="off" />
+        <i class="fas fa-search search-icon"></i>
+    </div>
+    
+    <div id="resultCount" class="result-count">{{ assessments|length }} students found</div>
+    
+    <!-- Students Table -->
+    <div class="table-responsive">
+        <table class="table student-table">
+            <thead>
+                <tr>
+                    <th>Analysis No</th>
+                    <th>Name</th>
+                    <th>Parent's Name</th>
+                    <th>DOB</th>
+                    <th>Standard</th>
+                    <th>Institute</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+                {% for assessment in assessments %}
+                <tr>
+                    <td><strong>{{ assessment.analysis_no or '-' }}</strong></td>
+                    <td>{{ assessment.name or '-' }}</td>
+                    <td>{{ assessment.parent_name or '-' }}</td>
+                    <td>{{ assessment.dob or '-' }}</td>
+                    <td>{{ assessment.class_ or '-' }}</td>
+                    <td>{{ assessment.institute or '-' }}</td>
+                    <td>{{ assessment.contact or '-' }}</td>
+                    <td>{{ assessment.email or '-' }}</td>
+                    <td>
+                        <div class="action-icons">
+                            <a href="{{ url_for('prepare_report', id=assessment.id) }}" 
+                               class="action-btn action-download" 
+                               title="Download PDF">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a href="{{ url_for('edit_student', id=assessment.id) }}" 
+                               class="action-btn action-edit" 
+                               title="Edit Student">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="post" 
+                                  action="{{ url_for('delete_student', id=assessment.id) }}" 
+                                  style="display:inline;" 
+                                  onsubmit="return confirm('Are you sure you want to delete this student?')">
+                                <button type="submit" 
+                                        class="action-btn action-delete" 
+                                        title="Delete Student">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Search Functionality -->
+<script>
+$(document).ready(function() {
+    const searchInput = $('#searchInput');
+    const tableBody = $('#studentTableBody');
+    const resultCount = $('#resultCount');
+    
+    // Store original data for reset
+    let allStudents = [];
+    {% for assessment in assessments %}
+    allStudents.push({
+        'id': {{ assessment.id }},
+        'analysis_no': '{{ assessment.analysis_no or "-" }}',
+        'name': '{{ assessment.name or "-" }}',
+        'parent_name': '{{ assessment.parent_name or "-" }}',
+        'dob': '{{ assessment.dob or "-" }}',
+        'class_': '{{ assessment.class_ or "-" }}',
+        'institute': '{{ assessment.institute or "-" }}',
+        'contact': '{{ assessment.contact or "-" }}',
+        'email': '{{ assessment.email or "-" }}'
+    });
+    {% endfor %}
+    
+    updateResultCount({{ assessments|length }});
+    
+    searchInput.on('input', function() {
+        const query = $(this).val().trim().toLowerCase();
+        
+        if (query === '') {
+            displayResults(allStudents);
+            updateResultCount(allStudents.length);
+        } else {
+            const filteredStudents = allStudents.filter(function(student) {
+                return student.name.toLowerCase().includes(query);
+            });
+            
+            displayResults(filteredStudents);
+            updateResultCount(filteredStudents.length);
+        }
+    });
+    
+    function displayResults(students) {
+        tableBody.empty();
+        
+        if (students.length === 0) {
+            tableBody.append(`
+                <tr>
+                    <td colspan="9" style="text-align:center; color:#888; font-style: italic; padding: 40px;">
+                        <i class="fas fa-search" style="font-size: 48px; margin-bottom: 15px; display: block; color: #ddd;"></i>
+                        <h5>No students found matching your search</h5>
+                        <p class="text-muted">Try adjusting your search terms</p>
+                    </td>
+                </tr>
+            `);
+        } else {
+            students.forEach(function(student) {
+                const row = `
+                    <tr>
+                        <td><strong>${student.analysis_no}</strong></td>
+                        <td>${student.name}</td>
+                        <td>${student.parent_name}</td>
+                        <td>${student.dob}</td>
+                        <td>${student.class_}</td>
+                        <td>${student.institute}</td>
+                        <td>${student.contact}</td>
+                        <td>${student.email}</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="/prepare_report/${student.id}" class="action-btn action-download" title="Download PDF">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                <a href="/edit_student/${student.id}" class="action-btn action-edit" title="Edit Student">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="post" action="/delete_student/${student.id}" style="display:inline;" onsubmit="return confirm('Are you sure?')">
+                                    <button type="submit" class="action-btn action-delete" title="Delete Student">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+        }
+    }
+    
+    function updateResultCount(count) {
+        let countText;
+        if (count === 0) {
+            countText = 'No matches found';
+        } else if (count === 1) {
+            countText = '1 student found';
+        } else {
+            countText = `${count} students found`;
+        }
+        resultCount.text(countText);
+    }
+});
+</script>
+
+{% endblock %}

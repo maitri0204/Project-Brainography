@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .result-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        background: #f9f9f9;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .student-info {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border: 2px solid #18447e;
+    }
+    .student-info h3 {
+        color: #18447e;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 10px;
+    }
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .info-label {
+        font-weight: bold;
+        color: #333;
+    }
+    .calculation-section {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        border: 2px solid #28a745;
+    }
+    .calculation-section h3 {
+        color: #28a745;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    .results-table th, .results-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+    }
+    .results-table th {
+        background-color: #18447e;
+        color: white;
+        font-weight: bold;
+    }
+    .results-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    .percentage-cell {
+        font-weight: bold;
+        color: #28a745;
+    }
+    .total-row {
+        background-color: #e8f4f8 !important;
+        font-weight: bold;
+    }
+    .total-row td {
+        border-top: 2px solid #18447e;
+    }
+    .action-buttons {
+        text-align: center;
+        margin-top: 30px;
+    }
+    .btn {
+        padding: 12px 30px;
+        margin: 0 10px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-primary {
+        background: #18447e;
+        color: white;
+    }
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    .btn:hover {
+        opacity: 0.9;
+    }
+</style>
+
+<div class="result-container">
+    <!-- Student Information Section -->
+    <div class="student-info">
+        <h3>Student Information</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">Name:</span>
+                <span>{{ student_data.name or '-' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Parent's Name:</span>
+                <span>{{ student_data.parent_name or '-' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Date of Birth:</span>
+                <span>{{ student_data.dob or '-' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Class:</span>
+                <span>{{ student_data.class or '-' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Institute:</span>
+                <span>{{ student_data.institute or '-' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Contact:</span>
+                <span>{{ student_data.contact or '-' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span>{{ student_data.email or '-' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Analysis No:</span>
+                <span>{{ student_data.analysis_no or '-' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculation Results Section -->
+    <div class="calculation-section">
+        <h3>Fingerprint Analysis Results</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Finger</th>
+                    <th>RC Value</th>
+                    <th>Percentage (%)</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set finger_names = {
+                    'l1': 'L1',
+                    'l2': 'L2',
+                    'l3': 'L3',
+                    'l4': 'L4',
+                    'l5': 'L5',
+                    'r1': 'R1',
+                    'r2': 'R2',
+                    'r3': 'R3',
+                    'r4': 'R4',
+                    'r5': 'R5'
+                } %}
+                
+                {% for finger in ['l1', 'l2', 'l3', 'l4', 'l5', 'r1', 'r2', 'r3', 'r4', 'r5'] %}
+                <tr>
+                    <td>{{ finger_names[finger] }}</td>
+                    <td>{{ rc_values[finger] }}</td>
+                    <td class="{% if percentages_display[finger] == 'X' %}no-data-cell{% else %}percentage-cell{% endif %}">
+                        {% if percentages_display[finger] == 'X' %}
+                            X
+                        {% else %}
+                            {{ percentages_display[finger] }}%
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if percentages_display[finger] == 'X' %}
+                            Open
+                        {% elif percentages_display[finger]|float >= 9 %}
+                            Strong
+                        {% elif percentages_display[finger]|float >= 8 %}
+                            Average
+                        {% else %}
+                            Weak
+                        {% endif %}
+                    </td>                    
+                </tr>
+                {% endfor %}
+
+                <tr class="total-row">
+                    <td><strong>Total</strong></td>
+                    <td><strong>{{ total_rc }}</strong></td>
+                    <td><strong>100%</strong></td>
+                    <td><strong>Complete Analysis</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Career Options Section -->
+    <div class="career-options-section">
+        <h3>Career Options</h3>
+        <div class="career-boxes">
+            <div class="career-box highly-recommended-box">
+                <h4>Highly Recommended</h4>
+                <ul class="career-list">
+                    {% if career_recommendations.highly_recommended %}
+                        {% for career in career_recommendations.highly_recommended %}
+                            <li class="career-name">{{ career }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="no-careers">No highly recommended careers found.</li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="career-box recommended-box">
+                <h4>Recommended</h4>
+                <ul class="career-list">
+                    {% if career_recommendations.recommended %}
+                        {% for career in career_recommendations.recommended %}
+                            <li class="career-name">{{ career }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="no-careers">No recommended careers found.</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>    
+    <!-- NEW: Thinking Ability Section -->
+    <div class="thinking-ability-section">
+        <h3>Thinking Ability Analysis</h3>
+        <div class="brain-analysis">
+            <div class="brain-section">
+                <div class="brain-card left-brain">
+                    <h4>Logic (Left Brain)</h4>
+                    <div class="brain-result">{{ left_brain_result }}</div>
+                </div>
+                <div class="brain-card right-brain">
+                    <h4>Emotional (Right Brain)</h4>
+                    <div class="brain-result">{{ right_brain_result }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Achievement Styles Section -->
+    <div class="achievement-styles-section">
+        <h3>Achievement Styles</h3>
+        <div class="achievement-grid">
+            <div class="achievement-card follower-card">
+                <h4>Follower</h4>
+                <div class="achievement-result">{{ achievement_styles.follower }}</div>
+            </div>
+            <div class="achievement-card experimental-card">
+                <h4>Experimental</h4>
+                <div class="achievement-result">{{ achievement_styles.experimental }}</div>
+            </div>
+            <div class="achievement-card different-card">
+                <h4>Different</h4>
+                <div class="achievement-result">{{ achievement_styles.different }}</div>
+            </div>
+            <div class="achievement-card thoughtful-card">
+                <h4>Thoughtful</h4>
+                <div class="achievement-result">{{ achievement_styles.thoughtful }}</div>
+            </div>
+        </div>
+    </div>
+    <!-- NEW: Learning & Communication Style Section -->
+    <div class="learning-communication-section">
+        <h3>Learning & Communication Style</h3>
+        <div class="learning-analysis">
+            <div class="learning-section">
+                <div class="learning-card kinesthetic">
+                    <h4>Kinesthetic</h4>
+                    <div class="learning-result">{{ kin_result }}</div>
+                </div>
+                <div class="learning-card auditory">
+                    <h4>Auditory</h4>
+                    <div class="learning-result">{{ aud_result }}</div>
+                </div>
+                <div class="learning-card visual">
+                    <h4>Visual</h4>
+                    <div class="learning-result">{{ vis_result }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Work Ability Style Section -->
+    <div class="work-ability-section">
+        <h3>Work Ability Style</h3>
+        <table class="work-ability-table">
+            <thead>
+                <tr>
+                    <th>Ability Type</th>
+                    <th>Result</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set ability_names = {
+                    'iq': 'IQ (Intelligence Quotient)',
+                    'aq': 'AQ (Adversity Quotient)',
+                    'cq': 'CQ (Creativity Quotient)',
+                    'eq': 'EQ (Emotional Quotient)',
+                    'vq': 'VQ (Visionary Quotient)'
+                } %}
+                
+                {% for ability in ['iq', 'aq', 'cq', 'eq', 'vq'] %}
+                <tr>
+                    <td class="ability-name">{{ ability_names[ability] }}</td>
+                    <td class="ability-result">{{ work_ability_results[ability] }}</td>
+                    <td class="ability-description">
+                        {% set result_value = work_ability_results[ability] %}
+                        {% if 'X' in result_value %}
+                            Open
+                        {% else %}
+                            {% set numeric_value = result_value|float %}
+                            {% if numeric_value >= 20 %}
+                                Strong
+                            {% elif numeric_value > 18 %}
+                                Above Average
+                            {% elif numeric_value >= 16 %}
+                                Average
+                            {% else %}
+                                Weak
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- NEW: Personality Section -->
+    {% if personality_features %}
+    <div class="personality-section">
+        <h3>Personality</h3>
+        <div class="personality-features">
+            {% for feature_name, sub_features in personality_features.items() %}
+            {% if sub_features %}  <!-- Only show if sub_features exist -->
+            <div class="personality-feature {{ feature_name.lower() }}">
+                <h4>{{ feature_name }}</h4>
+                <div class="sub-features">
+                    {% for sub_feature_name, sub_feature_value in sub_features.items() %}
+                    {% if sub_feature_value %}  <!-- Only show if condition is met -->
+                    <div class="sub-feature-item">
+                        <span class="sub-feature-name">{{ sub_feature_name }}</span>
+                        <span class="sub-feature-status">✓</span>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <!-- Optional: Show message when no personality features match -->
+    <div class="personality-section">
+        <h3>Personality</h3>
+        <div class="no-features-message">
+            <p>No personality features match the current pattern combination.</p>
+        </div>
+    </div>
+    {% endif %}
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <!-- <a href="{{ url_for('add_student') }}" class="btn btn-secondary">Back to Form</a> -->
+        <!-- <button onclick="window.print()" class="btn btn-success">Print Results</button> -->
+        <a href="{{ url_for('preview_pdf') }}" class="btn btn-primary">Generate PDF</a>
+        <!-- <a href="{{ url_for('manage_student') }}" class="btn btn-primary">Manage Students</a> -->
+    </div>
+</div>
+
+<script>
+// Print functionality
+window.addEventListener('beforeprint', function() {
+    document.querySelector('.action-buttons').style.display = 'none';
+});
+
+window.addEventListener('afterprint', function() {
+    document.querySelector('.action-buttons').style.display = 'block';
+});
+</script>
+{% endblock %}

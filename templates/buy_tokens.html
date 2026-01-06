@@ -1,0 +1,492 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4 text-center">
+                <i class="fas fa-coins text-warning me-2"></i>Buy Tokens
+            </h2>
+            
+            <!-- Token Dashboard -->
+            <div class="card mb-5 shadow-sm">
+                <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #232f3e 0%, #37475a 100%);">
+                    <h5 class="mb-0 text-center">
+                        <i class="fas fa-chart-line me-2"></i>Token Dashboard
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-info h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-shopping-cart fa-2x text-info mb-2"></i>
+                                    <h3 class="text-info mb-1">{{ tokens_bought }}</h3>
+                                    <p class="text-muted mb-0 fw-bold">Total Purchased</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-warning h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-user-graduate fa-2x text-warning mb-2"></i>
+                                    <h3 class="text-warning mb-1">{{ tokens_used }}</h3>
+                                    <p class="text-muted mb-0 fw-bold">Tokens Used</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-success h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-wallet fa-2x text-success mb-2"></i>
+                                    <h3 class="text-success mb-1">{{ tokens_left }}</h3>
+                                    <p class="text-muted mb-0 fw-bold">Tokens Left</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Token Packages -->
+            <h3 class="mb-4 text-center">🎯 Choose Your Token Package</h3>
+            <div class="row justify-content-center">
+                {% for package in packages %}
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                    <div class="card token-package h-100 position-relative">
+                        <!-- Popular Badge for Package 2 -->
+                        {% if package.id == 2 %}
+                        <div class="badge-popular">
+                            <i class="fas fa-star"></i> POPULAR
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Savings Badge -->
+                        {% if package.savings %}
+                        <div class="badge-savings">
+                            {{ package.savings }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="card-header text-center">
+                            <div class="token-icon mb-3">
+                                <i class="fas fa-coins fa-3x"></i>
+                            </div>
+                            <h4 class="package-title">{{ package.title }}</h4>
+                        </div>
+                        
+                        <div class="card-body text-center d-flex flex-column">
+                            <div class="token-count mb-3">
+                                <span class="token-number">{{ package.tokens }}</span>
+                                <span class="token-text">TOKENS</span>
+                            </div>
+                            
+                            <p class="package-description flex-grow-1">{{ package.description }}</p>
+                            
+                            <div class="pricing-section mt-auto">
+                                <div class="price-main">₹{{ package.price }}</div>
+                                <div class="price-per-token">
+                                    ₹{{ "%.2f"|format(package.price / package.tokens) }} per token
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <form method="POST" action="{{ url_for('buy_tokens') }}">
+                                <input type="hidden" name="package_id" value="{{ package.id }}">
+                                <button type="submit" class="btn btn-buy-token w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i>BUY NOW
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="alert alert-info mt-5 shadow-sm" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: none; border-radius: 15px;">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <i class="fas fa-info-circle fa-3x text-info"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <h6 class="fw-bold text-info mb-3">
+                            <i class="fas fa-lightbulb me-2"></i>How Tokens Work:
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>1 Token = 1 Student Entry</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Tokens deducted only when adding new students
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Download student reports unlimited times
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>No expiry date</strong> on purchased tokens
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+/* Amazon-inspired token package cards with enhanced hover effects */
+.token-package {
+    min-height: 700px;
+    max-height: 700px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #333333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+
+
+.token-package:hover {
+    transform: translateY(-20px) scale(1.05);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+    border-color: #ff9900;
+    z-index: 10;
+}
+
+
+.token-package::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff9900 0%, #ffad33 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+
+.token-package:hover::before {
+    transform: scaleX(1);
+}
+
+
+.token-package .card-header {
+    background: linear-gradient(135deg, #232f3e 0%, #37475a 100%);
+    border: none;
+    padding: 2rem 1rem 1rem;
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+
+.token-icon {
+    background: linear-gradient(135deg, #ff9900 0%, #ffad33 100%);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 153, 0, 0.3);
+}
+
+
+.token-package:hover .token-icon {
+    transform: rotateY(360deg);
+    transition: transform 0.8s ease;
+}
+
+
+.package-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin: 0;
+    color: #ffffff;
+}
+
+
+.token-count {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #232f3e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 0 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ff9900;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.token-count::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 153, 0, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+
+.token-package:hover .token-count::before {
+    left: 100%;
+}
+
+
+.token-number {
+    font-size: 3rem;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+    color: #232f3e;
+    background: linear-gradient(45deg, #ff9900, #232f3e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+
+.token-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #666;
+}
+
+
+.package-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 1rem 0;
+    color: #555;
+    font-weight: 400;
+}
+
+
+.pricing-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.pricing-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 153, 0, 0.05) 0%, rgba(35, 47, 62, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+
+.token-package:hover .pricing-section::before {
+    opacity: 1;
+}
+
+
+.price-main {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #232f3e;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+
+.price-per-token {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    color: #666;
+    position: relative;
+    z-index: 1;
+}
+
+
+.token-package .card-footer {
+    background: transparent;
+    border: none;
+    padding: 1.5rem;
+}
+
+
+.btn-buy-token {
+    background: linear-gradient(135deg, #ff9900 0%, #ffad33 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.875rem 1.5rem;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 153, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+
+.btn-buy-token::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+
+.btn-buy-token:hover {
+    background: linear-gradient(135deg, #e68900 0%, #ff9900 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(255, 153, 0, 0.4);
+    color: white;
+}
+
+
+.btn-buy-token:hover::before {
+    left: 100%;
+}
+
+
+.badge-popular {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+    animation: pulse 2s infinite;
+}
+
+
+.badge-savings {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    z-index: 9;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .token-number {
+        font-size: 2.5rem;
+    }
+    
+    .price-main {
+        font-size: 1.8rem;
+    }
+    
+    .token-package:hover {
+        transform: translateY(-10px) scale(1.02);
+    }
+}
+
+
+/* Enhanced animations */
+.token-package {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+
+.token-package:nth-child(1) { animation-delay: 0.1s; }
+.token-package:nth-child(2) { animation-delay: 0.2s; }
+.token-package:nth-child(3) { animation-delay: 0.3s; }
+.token-package:nth-child(4) { animation-delay: 0.4s; }
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+/* Additional Amazon-like touches */
+.token-package .card-body {
+    padding: 1.5rem;
+}
+
+
+.token-package:hover .package-title {
+    color: #ff9900;
+    transition: color 0.3s ease;
+}
+
+
+/* Subtle glow effect on hover */
+.token-package:hover {
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.25),
+        0 0 40px rgba(255, 153, 0, 0.1);
+}
+</style>
+{% endblock %}
